@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #0b0b0f;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Fairy Lights */
+    .fairy-lights {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 20px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 5;
+    }
+
+    .fairy-lights.active {
+      opacity: 1;
+    }
+
+    .bulb {
+      width: 14px;
+      height: 14px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff9800;
+      animation: glow 1.5s infinite alternate ease-in-out;
+    }
+
+    .bulb:nth-child(even) {
+      animation-delay: 0.7s;
+    }
+
+    @keyframes glow {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 15px #ffe082, 0 0 30px #ff9800; }
+    }
+
+    /* Card Box */
+    .center-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .step-card {
+      display: none;
+      background: #141419;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px 45px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .step-card.active {
+      display: block;
+    }
+
+    .glow-text {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .highlight-name {
+      color: #ff3366;
+      text-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
+    }
+
+    .sub-text {
+      font-size: 0.85rem;
+      color: #aaa;
+      margin: 15px 0 25px 0;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .step-title {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .glow-btn {
+      background: linear-gradient(135deg, #e52d27, #b31217);
+      color: white;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(229, 45, 39, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .glow-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(229, 45, 39, 0.8);
+    }
+
+    /* Red Curtains */
+    .curtain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: none;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .curtain {
+      width: 50%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        #7a0c10,
+        #7a0c10 20px,
+        #b31217 20px,
+        #b31217 40px
+      );
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8);
+      transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .curtain-container.opened .left-curtain {
+      transform: translateX(-100%);
+    }
+
+    .curtain-container.opened .right-curtain {
+      transform: translateX(100%);
+    }
+
+    /* Balloons */
+    .balloons-container {
+      position: fixed;
+      bottom: -100px;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -80px;
+      width: 32px;
+      height: 42px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      animation: floatUp 6s linear forwards;
+    }
+
+    .balloon::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 15px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-110vh); opacity: 0.9; }
+    }
+
+    /* Letter Card */
+    .letter-card {
+      display: none;
+      background: #15151c;
+      max-width: 520px;
+      padding: 35px 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      text-align: center;
+      z-index: 12;
+      animation: zoomIn 0.8s ease;
+    }
+
+    .letter-card h2 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5rem;
+      color: #ff4d6d;
+      margin-bottom: 15px;
+    }
+
+    .letter-card p {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: #ddd;
+      margin-bottom: 25px;
+    }
+
+    /* Moments Gallery */
+    .gallery-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      z-index: 15;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .gallery-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem;
+      color: #ff4d6d;
+      margin-bottom: 20px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 160px);
+      gap: 20px;
+    }
+
+    .memory-card {
+      position: relative;
+      width: 160px;
+      height: 200px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .memory-card:hover {
+      transform: translateY(-5px) scale(1.03);
+    }
+
+    .memory-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .memory-card .caption {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .memory-card:hover .caption {
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fairy Lights -->
+  <div class="fairy-lights" id="fairyLights">
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+  </div>
+
+  <!-- Background Balloons Container -->
+  <div class="balloons-container" id="balloonsContainer"></div>
+
+  <!-- Interaction Card -->
+  <div class="center-container" id="interactionBox">
+    <!-- Step 0 -->
+    <div class="step-card active" id="step0">
+      <h1 class="glow-text">Happy Birthday, <span class="highlight-name">Bestie</span></h1>
+      <p class="sub-text">A cinematic journey created just for you</p>
+      <button class="glow-btn" onclick="nextStep(1)">OPEN YOUR GIFT</button>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-card" id="step1">
+      <p class="step-title">It's Your Special Day ✨</p>
+      <button class="glow-btn" onclick="nextStep(2)">NEXT</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card" id="step2">
+      <p class="step-title">Have a look at it Madam jii 💖</p>
+      <button class="glow-btn" onclick="nextStep(3)">NEXT</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card" id="step3">
+      <p class="step-title">Ready for your surprise? 🎁</p>
+      <button class="glow-btn" onclick="nextStep(4)">LET'S GO</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card" id="step4">
+      <p class="step-title">The Stage is Set... 💡</p>
+      <button class="glow-btn" onclick="turnOnLights()">TURN ON LIGHTS</button>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card" id="step5">
+      <p class="step-title">Let the colors fly! 🎈</p>
+      <button class="glow-btn" onclick="flyBalloons()">FLY BALLOONS</button>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-card" id="step6">
+      <p class="step-title">Almost there... 💌</p>
+      <button class="glow-btn" onclick="revealCurtain()">SHOW THE MESSAGE</button>
+    </div>
+  </div>
+
+  <!-- Curtains -->
+  <div class="curtain-container" id="curtains">
+    <div class="curtain left-curtain"></div>
+    <div class="curtain right-curtain"></div>
+  </div>
+
+  <!-- Message Card -->
+  <div class="letter-card" id="letterCard">
+    <h2>My Dearest Bestie,</h2>
+    <p>
+      Today isn't just a date on the calendar; it's a celebration of the light and joy you bring into my life. Every moment with you is like a frame from a beautiful movie, and I'm so lucky to have you. May this year be filled with as much magic as you give to everyone around you.
+    </p>
+    <button class="glow-btn" onclick="showMemories()">OUR MEMORIES</button>
+  </div>
+
+  <!-- Moments Gallery -->
+  <div class="gallery-container" id="galleryContainer">
+    <h2 class="gallery-title">Moments in Time</h2>
+    <div class="gallery-grid">
+      <div class="memory-card">
+        <img src="photo1.jpg" alt="Memory 1" />
+        <div class="caption">You make my world beautiful ❤️</div>
+      </div>
+      <div class="memory-card">
+        <img src="photo2.jpg" alt="Memory 2" />
+        <div class="caption">Forever laughing with you ✨</div>
+      </div>
+      <div class="memory-card">
+        <img src="photo3.jpg" alt="Memory 3" />
+        <div class="caption">My favourite smile in the world 🌸</div>
+      </div>
+      <div class="memory-card">
+        <img src="photo4.jpg" alt="Memory 4" />
+        <div class="caption">Every second with you is a gift 🎁</div>
+      </div>
+      <div class="memory-card">
+        <img src="photo5.jpg" alt="Memory 5" />
+        <div class="caption">Our memories are forever 💫</div>
+      </div>
+      <div class="memory-card">
+        <img src="photo6.jpg" alt="Memory 6" />
+        <div class="caption">Always & forever 💕</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function nextStep(stepNumber) {
+      document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
+      const next = document.getElementById(`step${stepNumber}`);
+      if (next) next.classList.add('active');
+    }
+
+    function turnOnLights() {
+      document.getElementById('fairyLights').classList.add('active');
+      nextStep(5);
+    }
+
+    function flyBalloons() {
+      const container = document.getElementById('balloonsContainer');
+      const colors = ['#ff4d6d', '#ffb703', '#8338ec', '#3a86ff', '#06d6a0'];
+      
+      for (let i = 0; i < 25; i++) {
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        balloon.style.left = Math.random() * 95 + '%';
+        balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        balloon.style.animationDelay = Math.random() * 2 + 's';
+        balloon.style.animationDuration = 4 + Math.random() * 3 + 's';
+        container.appendChild(balloon);
+      }
+      nextStep(6);
+    }
+
+    function revealCurtain() {
+      document.getElementById('interactionBox').style.display = 'none';
+      const curtain = document.getElementById('curtains');
+      curtain.style.display = 'flex';
+      
+      setTimeout(() => {
+        curtain.classList.add('opened');
+        document.getElementById('letterCard').style.display = 'block';
+      }, 400);
+    }
+
+    function showMemories() {
+      document.getElementById('letterCard').style.display = 'none';
+      const gallery = document.getElementById('galleryContainer');
+      gallery.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
